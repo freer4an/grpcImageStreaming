@@ -179,15 +179,6 @@ func (s *ImageServer) createThumbnail(ctx context.Context, task *Task) error {
 	return nil
 }
 
-func (s *ImageServer) loadImage(uid string, basePath string) ([]byte, error) {
-	filePath := filepath.Join(basePath, uid+".jpg")
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("cannot read image: %v", err)
-	}
-	return data, nil
-}
-
 func createDir(paths []string) error {
 	for _, path := range paths {
 		if err := os.MkdirAll(path, os.ModePerm); err != nil {
