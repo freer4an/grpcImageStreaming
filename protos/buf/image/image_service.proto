@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package image.v1;
+
+import "image.proto";
+
+option go_package = "github.com/freer4an/image-storage/protos/gen";
+
+service ImageService {
+  rpc UploadImage(stream UploadImageRequest) returns (UploadImageResponse);
+  rpc GetImage (GetImageRequest) returns (GetImageResponse);
+  rpc DeleteImage (DeleteImageRequest) returns (DeleteImageResponse);
+  rpc ListImages (ListImagesRequest) returns (ListImagesResponse);
+}
+
+message GetImageRequest {
+  string id = 1;
+}
+
+message GetImageResponse {
+  bytes image = 1;
+  Image imageMetada = 2;
+}
+
+message UploadImageRequest {
+  string name = 1;
+  string format = 2;
+  bytes imgChunk = 3;
+}
+
+message UploadImageResponse {
+  uint32 size = 1;
+}
+
+message DeleteImageRequest {
+  string id = 1;
+}
+
+message DeleteImageResponse {
+}
+
+message ListImagesRequest {}
+
+message ListImagesResponse {
+  repeated Image images = 1;
+}

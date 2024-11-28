@@ -1,0 +1,19 @@
+services:
+#  api:
+#    build: .
+#    ports:
+#      - '8080:8080'
+#    restart: always
+#    depends_on:
+#      - postgres
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=image_storage
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    restart: always

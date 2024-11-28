@@ -1,0 +1,16 @@
+app:
+  addr: 'localhost:8081'
+  image_formats:
+    - ".jpg"
+    - ".pdf"
+paths:
+  images: 'images'
+  o_images_storage: 'image_storage/originals'
+  thumbnails_storage: 'image_storage/thumbnails'
+db:
+  name: 'image_storage'
+  user: 'postgres'
+  password: 'pass'
+  port: "5432"
+  ssl_mode: 'disabled'
+  host: "localhost"
