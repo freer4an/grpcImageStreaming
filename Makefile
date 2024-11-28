@@ -18,10 +18,10 @@ clearstorage:
 	rm -f image_storage/originals/* && rm -f image_storage/thumbnails/*
 
 migup:
-	goose -dir migrations ${db_driver} ${db_string} up
+	goose -dir goose/migrations ${db_driver} ${db_string} up
 
 migdown:
-	goose -dir migrations ${db_driver} ${db_string} down
+	goose -dir goose/migrations ${db_driver} ${db_string} down
 
 testListImage:
 	grpcurl -d '{}' -plaintext localhost:8081 image.v1.ImageService/ListImages
