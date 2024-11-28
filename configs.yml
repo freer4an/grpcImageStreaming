@@ -1,5 +1,5 @@
 app:
-  addr: 'localhost:8081'
+  addr: '127.0.0.1:8081'
   image_formats:
     - ".jpg"
     - ".pdf"

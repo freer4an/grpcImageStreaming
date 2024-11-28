@@ -1,14 +1,11 @@
-FROM golang:1.22 AS builder
+FROM golang:1.22
 
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
-COPY . .
-RUN go build -o cmd/server/main.go
+RUN go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
+COPY . ./
+RUN go build cmd/server/main.go
 
-FROM alpine:latest
-
-WORKDIR app/
-COPY --from=builder /app .
 EXPOSE 8081
-CMD ["./app"]
+CMD ["./main"]

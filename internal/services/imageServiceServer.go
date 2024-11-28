@@ -3,17 +3,18 @@ package services
 import (
 	"context"
 	"fmt"
+	"io"
+	"log/slog"
+	"os"
+	"path/filepath"
+	"time"
+
 	"github.com/disintegration/imaging"
 	"github.com/freer4an/image-storage/internal/models"
 	"github.com/freer4an/image-storage/protos/gen"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"io"
-	"log/slog"
-	"os"
-	"path/filepath"
-	"time"
 )
 
 const (
@@ -55,7 +56,7 @@ func NewImageServer(oImagesStorage, thumbnailsStorage string, storage Storage) *
 func (s *ImageServer) UploadImage(stream gen.ImageService_UploadImageServer) error {
 	var totalSize uint32
 	workerPool := NewWorkerPool()
-	ctx, cancel := context.WithTimeout(stream.Context(), time.Second*5)
+	ctx, cancel := context.WithTimeout(stream.Context(), time.Second*20)
 	defer cancel()
 	workerPool.Start(ctx, s.createThumbnail)
 

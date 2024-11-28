@@ -2,24 +2,30 @@ package main
 
 import (
 	"context"
-	"github.com/freer4an/image-storage/internal/config"
-	"github.com/freer4an/image-storage/internal/db"
-	"github.com/freer4an/image-storage/internal/repository"
-	"github.com/freer4an/image-storage/internal/services"
-	"github.com/freer4an/image-storage/protos/gen"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
+
+	migrations "github.com/freer4an/image-storage/goose"
+	"github.com/freer4an/image-storage/internal/config"
+	"github.com/freer4an/image-storage/internal/db"
+	"github.com/freer4an/image-storage/internal/repository"
+	"github.com/freer4an/image-storage/internal/services"
+	"github.com/freer4an/image-storage/protos/gen"
+	_ "github.com/joho/godotenv/autoload"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func main() {
 	cfg := config.New("configs.yml")
 	grpcServer := grpc.NewServer()
 	ctx := context.Background()
+	if err := migrations.MakeMigrations(); err != nil {
+		log.Fatalf("migration failed", err)
+	}
 	pgxPool := db.ConnectToPostgres(ctx, cfg.GetDbUrl())
 	storage := repository.NewImageRepository(pgxPool)
 	imageService := services.NewImageServer(cfg.Paths.OImagesStorage, cfg.Paths.ThumbnailsStorage, storage)

@@ -2,6 +2,8 @@ package config
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
@@ -12,7 +14,7 @@ type Config struct {
 }
 
 func (c *Config) GetDbUrl() string {
-	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", c.Db.User, c.Db.Pass, c.Db.Host, c.Db.Port, c.Db.Name)
+	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", c.Db.User, c.Db.Pass, os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), c.Db.Name)
 }
 
 type app struct {
