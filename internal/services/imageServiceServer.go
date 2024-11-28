@@ -40,15 +40,13 @@ type ImageServer struct {
 	gen.UnimplementedImageServiceServer
 	oImagesStorage    string
 	thumbnailsStorage string
-	cache             IMCache
 	storage           Storage
 }
 
-func NewImageServer(oImagesStorage, thumbnailsStorage string, cache IMCache, storage Storage) *ImageServer {
+func NewImageServer(oImagesStorage, thumbnailsStorage string, storage Storage) *ImageServer {
 	return &ImageServer{
 		oImagesStorage:    oImagesStorage,
 		thumbnailsStorage: thumbnailsStorage,
-		cache:             cache,
 		storage:           storage,
 	}
 }
@@ -129,16 +127,6 @@ func (s *ImageServer) GetImage(ctx context.Context, in *gen.GetImageRequest) (*g
 		ImageMetada: imageToGenImage(img),
 	}
 
-	//imgBytes, ok := s.cache.GetImage(in.GetId())
-	//if ok {
-	//	res.Image = imgBytes
-	//} else {
-	//	imgBytes, err = s.loadImage(in.GetId(), s.thumbnailsStorage)
-	//	if err != nil {
-	//		return nil, status.Errorf(codes.Internal, "cannot load image %s: %v", in.GetId(), err)
-	//	}
-	//	s.cache.SaveImage(in.GetId(), imgBytes)
-	//}
 	return res, nil
 }
 
@@ -146,7 +134,6 @@ func (s *ImageServer) DeleteImage(ctx context.Context, req *gen.DeleteImageReque
 	if err := s.storage.DeleteImage(ctx, req.GetId()); err != nil {
 		return nil, status.Errorf(codes.Internal, "cannot delete image %s: %s", req.GetId(), err.Error())
 	}
-	s.cache.DeleteImage(req.GetId())
 	return &gen.DeleteImageResponse{}, nil
 }
 

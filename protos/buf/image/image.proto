@@ -9,11 +9,10 @@ import "google/protobuf/timestamp.proto";
 
 message Image {
   string id = 1;
-  string name = 2;
-  string format = 3;
-  int32 width = 4;
-  int32 height = 5;
-  string original_path = 6;
-  string thumbnail_path = 7;
-  google.protobuf.Timestamp uploaded_at = 8;
+  string format = 2;
+  int32 width = 3;
+  int32 height = 4;
+  string original_path = 5;
+  string thumbnail_path = 6;
+  google.protobuf.Timestamp uploaded_at = 7;
 }

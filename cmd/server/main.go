@@ -20,10 +20,9 @@ func main() {
 	cfg := config.New("configs.yml")
 	grpcServer := grpc.NewServer()
 	ctx := context.Background()
-	cache := repository.NewImageCache()
 	pgxPool := db.ConnectToPostgres(ctx, cfg.GetDbUrl())
 	storage := repository.NewImageRepository(pgxPool)
-	imageService := services.NewImageServer(cfg.Paths.OImagesStorage, cfg.Paths.ThumbnailsStorage, cache, storage)
+	imageService := services.NewImageServer(cfg.Paths.OImagesStorage, cfg.Paths.ThumbnailsStorage, storage)
 	gen.RegisterImageServiceServer(grpcServer, imageService)
 	lis, err := net.Listen("tcp", cfg.App.Addr)
 	if err != nil {

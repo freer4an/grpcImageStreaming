@@ -18,8 +18,8 @@ func NewImageRepository(conn *pgxpool.Pool) *ImageRepository {
 
 func (r *ImageRepository) SaveImage(ctx context.Context, image *models.Image) (string, error) {
 	const query = `INSERT INTO 
-    		images ("id", "original_path", "thumbnail_path", "width", "height") 
-			VALUES ($1, $2, $3, $4, $5)`
+    		images ("id", "format", "width", "height", "original_path", "thumbnail_path") 
+			VALUES ($1, $2, $3, $4, $5, $6)`
 
 	tx, err := r.conn.Begin(ctx)
 	if err != nil {
@@ -29,10 +29,11 @@ func (r *ImageRepository) SaveImage(ctx context.Context, image *models.Image) (s
 
 	_, err = r.conn.Exec(ctx, query,
 		image.Id,
-		image.OriginalPath,
-		image.ThumbnailPath,
+		image.Format,
 		image.Width,
-		image.Height)
+		image.Height,
+		image.OriginalPath,
+		image.ThumbnailPath)
 	if err != nil {
 		return "", fmt.Errorf("failed to save image: %w", err)
 	}
@@ -66,39 +67,12 @@ func (r *ImageRepository) DeleteImage(ctx context.Context, id string) error {
 }
 
 func (r *ImageRepository) ListImages(ctx context.Context) ([]models.Image, error) {
-	const query = `SELECT id, original_path, thumbnail_path, width, height, uploaded_at FROM images`
-	//amount, err := r.CountImages(ctx)
-	//if err != nil {
-	//	return nil, fmt.Errorf("failed to count images: %w", err)
-	//}
-	//images := make([]models.Image, 0, amount)
+	const query = `SELECT id, format, width, height, original_path, thumbnail_path, uploaded_at FROM images`
 	rows, err := r.conn.Query(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to exec query images: %w", err)
 	}
-	//for rows.Next() {
-	//	values, err := rows.Values()
-	//	if err != nil {
-	//		return nil, fmt.Errorf("failed to fetch values: %w", err)
-	//	}
-	//	var uid uuid.UUID
-	//	uid, err = uuid.Parse(values[0].(string))
-	//	if err != nil {
-	//		return nil, fmt.Errorf("failed to parse uuid: %w", err)
-	//	}
-	//	fmt.Printf("%+v", values)
-	//	image := &models.Image{
-	//		Id:           uid.String(),
-	//		OriginalPath:  values[1].(string),
-	//		ThumbnailPath: values[2].(string),
-	//		Width:         values[3].(int),
-	//		Height:        values[4].(int),
-	//		UploadedAt:    values[5].(time.Time),
-	//	}
-	//	images = append(images, *image)
-	//}
 	return pgx.CollectRows(rows, pgx.RowToStructByName[models.Image])
-	//return images, nil
 }
 
 func (r *ImageRepository) CountImages(ctx context.Context) (int, error) {
