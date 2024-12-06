@@ -2,8 +2,6 @@ package config
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
@@ -14,11 +12,21 @@ type Config struct {
 }
 
 func (c *Config) GetDbUrl() string {
-	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", c.Db.User, c.Db.Pass, os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), c.Db.Name)
+	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable",
+		c.Db.User,
+		c.Db.Pass,
+		c.Db.Host,
+		c.Db.Port,
+		c.Db.Name)
+}
+
+func (c *Config) GetAddr() string {
+	return fmt.Sprintf("%s:%s", c.App.host, c.App.port)
 }
 
 type app struct {
-	Addr         string   `yaml:"addr"`
+	host         string   `yaml:"host" env:"HOST"`
+	port         string   `yaml:"port" env:"PORT"`
 	ImageFormats []string `yaml:"image_formats"`
 }
 
@@ -39,9 +47,16 @@ type database struct {
 
 func New(path string) *Config {
 	var config Config
+
 	err := cleanenv.ReadConfig(path, &config)
 	if err != nil {
 		panic(err)
 	}
+
+	err = cleanenv.ReadEnv(&config)
+	if err != nil {
+		panic(err)
+	}
+
 	return &config
 }

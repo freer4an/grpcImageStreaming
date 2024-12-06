@@ -5,7 +5,6 @@ import (
 	"embed"
 	"fmt"
 
-	"github.com/freer4an/image-storage/internal/config"
 	_ "github.com/lib/pq"
 	"github.com/pressly/goose/v3"
 )
@@ -13,14 +12,13 @@ import (
 //go:embed migrations/*.sql
 var embedMigrations embed.FS
 
-func MakeMigrations() error {
-	cfg := config.New("configs.yml")
-	fmt.Println(cfg.GetDbUrl())
-	db, err := sql.Open("postgres", cfg.GetDbUrl())
+func MakeMigrations(dbUrl string) error {
+	db, err := sql.Open("postgres", dbUrl)
 	if err != nil {
 		return fmt.Errorf("sql open %w", err)
 	}
 	defer db.Close()
+
 	if err = goose.SetDialect("postgres"); err != nil {
 		return err
 	}

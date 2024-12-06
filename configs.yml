@@ -1,5 +1,6 @@
 app:
-  addr: '127.0.0.1:8081'
+  host: '127.0.0.1'
+  port: '8081'
   image_formats:
     - ".jpg"
     - ".pdf"

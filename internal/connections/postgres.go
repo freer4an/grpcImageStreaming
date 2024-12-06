@@ -1,4 +1,4 @@
-package db
+package connections
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func ConnectToPostgres(ctx context.Context, dbUrl string) *pgxpool.Pool {
+func Postgres(ctx context.Context, dbUrl string) *pgxpool.Pool {
 	cfg, err := pgxpool.ParseConfig(dbUrl)
 	if err != nil {
 		panic(fmt.Errorf("failed to parse postgres connection string: %w", err))

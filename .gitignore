@@ -1,2 +1,4 @@
 data/
 .idea
+.env
+image_storage/
